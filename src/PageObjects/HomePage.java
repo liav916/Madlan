@@ -17,8 +17,11 @@ String inactive = "css-tc23vv elkstcv0";
     public HomePage(WebDriver driver) {
         super(driver);
     }
-    By header =By.cssSelector("[data-auto='desktop-header-wrapper']");
+    String city = "שדרות";
+    By searchField = By.cssSelector("[class='multi-search-input-wrapper css-ixz1sj ealzp4l9']");
+    By arrowElement = By.cssSelector("data-auto='bulletins-pagination-2'");
     By Title = By.cssSelector("[data-auto='primary_address_text']");
+    By header =By.cssSelector("[data-auto='desktop-header-wrapper']");
     By SubTitle = By.cssSelector("[data-auto='secondary_address_text']");
     By Price = By.cssSelector("[data-auto='current-price']");
 
@@ -26,12 +29,51 @@ String inactive = "css-tc23vv elkstcv0";
     By postImage = By.cssSelector("[class='css-1526ib8 e1r3dysu15']");
     By postPhone = By.cssSelector("[data-auto='phone-number-button']");
     By postSeller = By.cssSelector("[data-auto='poc-name']");
+    By postbackArrow = By.cssSelector("[data-auto='back-button-text']");
+    By searchElementField = By.cssSelector("[data-auto='autocomplete-textfield']");
 
 
+    public void clickOnSearchField() {
+        waitForElement(searchField);
+        WebElement searchField1 = driver.findElement(searchField);
+        scrollToAndClickElement(searchField1);
+    }
+    public void insertValue() throws InterruptedException {
+        WebElement searchElement = driver.findElement(searchElementField);
+        searchElement.sendKeys(city);
+        By CityFieldDropDown =By.cssSelector("[data-auto='autocomplete-suggestion']");
+        waitForElement(CityFieldDropDown);
+        List<WebElement> list = driver.findElements(CityFieldDropDown);
+        for(int i=0; i< list.size();i++){
+            String name = list.get(i).getText();
+            if (name.contains(city) && name.contains("עיר")){
+                (list.get(i)).click();
+                break;
+            }
+        }
 
+    }
+    public void allPostSize() throws InterruptedException {
+        List<WebElement> posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
+        for (int i=0; i<=posts.size(); i++){
+            WebElement post =  posts.get(i);
+            scrollToAndClickElement(post);
+         //   blockAds();
+            click(postbackArrow);
+            Thread.sleep(5000);
+            posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
+            }
+        }
+    public void blockAds(){
+        try{  By add = By.cssSelector("[data-auto='modal-popup']");
+            WebElement addElement = driver.findElement(add);
+            if(addElement.isDisplayed()){
+                By xButton = By.cssSelector("div [data-auto='modal-close-button']");
+                click(xButton);}} catch (NoSuchElementException e){}
 
-    public void clickoncatgory ()
-    {//waiting for all header to load
+    }
+
+    public void clickoncatgory () {//waiting for all header to load
         waitForElement(header);
         //catch all header catagorys
         List<WebElement> element = driver.findElements(By.cssSelector("[class='tab-link']"));
@@ -40,8 +82,7 @@ String inactive = "css-tc23vv elkstcv0";
         // click on the catgory
         catgory.click();
     }
-    public void getAllPostInfo ()
-    {
+    public void getAllPostInfo () {
 
         getTitle();
         getSubtitle();

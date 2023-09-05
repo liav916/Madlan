@@ -28,9 +28,7 @@ public class BaseTest {
         options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
         options.addArguments("--disable-blink-features=AutomationControlled");//Hcaptcha pass
         driver = new ChromeDriver(options);
-
         resetPage();
-
         driver.manage().window().maximize();
     }
 

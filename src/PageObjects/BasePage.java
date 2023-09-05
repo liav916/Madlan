@@ -2,6 +2,7 @@ package PageObjects;
 import Tests.BaseTest;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -28,6 +29,9 @@ public class BasePage
         waitForElement(elementLocation);
         driver.findElement(elementLocation).click();
     }
+    public  void OpenURL(String URL) {
+   driver.get(URL);
+    }
 public void goToElement(By elementLocation) {
 
 
@@ -39,6 +43,18 @@ public void goToElement(By elementLocation) {
         driver.findElement(elementLocation).clear();
         driver.findElement(elementLocation).sendKeys(text);
     }
+
+    public void scrollToAndClickElement(WebElement element) {
+        try {
+            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+            jsExecutor.executeScript("arguments[0].scrollIntoView(true);", element);
+            element.click();
+        } catch (Exception e) {
+            // Handle any exceptions that may occur
+            e.printStackTrace();
+        }
+    }
+
     public  void waitForElement(By by) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));

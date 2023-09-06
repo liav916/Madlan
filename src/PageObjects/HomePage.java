@@ -38,11 +38,13 @@ String inactive = "css-tc23vv elkstcv0";
     public void clickOnSearchField() {
         waitForElement(searchField);
         WebElement searchField1 = driver.findElement(searchField);
-      //  scrollToAndClickElement(searchField1);
+        scrollToAndClickElement(searchField1);
     }
-    public void insertValue() {
+    public void insertValue() throws InterruptedException {
         WebElement searchElement = driver.findElement(searchElementField);
+        Thread.sleep(2000);
         searchElement.sendKeys(city);
+        clickOnSearchField();
         By CityFieldDropDown =By.cssSelector("[data-auto='autocomplete-suggestion']");
         waitForElement(CityFieldDropDown);
         List<WebElement> list = driver.findElements(CityFieldDropDown);
@@ -68,29 +70,34 @@ String inactive = "css-tc23vv elkstcv0";
 //    }
 
     public void getAllPostInfo() throws InterruptedException {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+        waitForElement(test);
         List<WebElement> posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
+        js.executeScript("window.scrollTo(0, 0);");
         for (int i=0; i<=posts.size(); i++){
             waitForElement(test);
+            posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
             WebElement post =  posts.get(i);
-            Thread.sleep(5000);
+            String post1 =  posts.get(i).getText();
+            if (post1.contains("₪")){
+            Thread.sleep(2000);
             post.click();
             getpostInfo();
             blockAds();
-            Thread.sleep(5000);
-            click(postbackArrow);
-            posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
-            }
-        }
-    public void blockAds() throws InterruptedException{
+            Thread.sleep(2000);
+            click(postbackArrow);}
 
-        Thread.sleep(2000);
+            }
+
+        }
+    public void blockAds(){
         By add = By.cssSelector("[data-auto='modal-popup']");
-        try{  if (driver.findElement(add).isDisplayed()){
-           // WebElement addElement = driver.findElement(add);
-           // if(addElement.isDisplayed()){
+        try{  waitForElement(add);
+         if (driver.findElement(add).isDisplayed()){
                 By xButton = By.cssSelector("div [data-auto='modal-close-button']");
-                click(xButton);}} catch (NoSuchElementException e){}
-    }
+                click(xButton);}} catch (TimeoutException e){}
+    } // Done modal
     public void clickoncatgory () {//waiting for all header to load
         waitForElement(header);
         //catch all header catagorys
@@ -100,52 +107,53 @@ String inactive = "css-tc23vv elkstcv0";
         // click on the catgory
         catgory.click();
     }
-   public void getpostInfo () throws InterruptedException {
+   public void getpostInfo () {
 
-           blockAds();
-           getSubtitle();
-           blockAds();
+
+
+       getTitle(Title);
+       getSubtitle();
            getPrice();
-           blockAds();
-           getInfo();
-           blockAds();
+           getparagraph();
            getPhoneAndSeller();
-           blockAds();
            getGallery();
-           blockAds();
            getBoolean();
            blockAds();
+
        }
 
-    public String getTitle () {
+    public String getTitle(By by){
+
         String title;
-try {
-        waitForElement(Title); // Make sure this method correctly waits for the element
-        WebElement element = driver.findElement(Title); // Assuming 'driver' is your WebDriver instance
+try {blockAds();
+        waitForElement(by); // Make sure this method correctly waits for the element
+        WebElement element = driver.findElement(by); // Assuming 'driver' is your WebDriver instance
          title = element.getText();
-System.out.println(title);}catch (TimeoutException e){System.out.println("project"); title="project";}
+System.out.println(title);}catch (TimeoutException e){System.out.println("project"); title="project";
+}
     return title;}
-    public void getSubtitle () {
+   public void getSubtitle () {
+       blockAds();
         waitForElement(SubTitle); // Make sure this method correctly waits for the element
         WebElement element = driver.findElement(SubTitle); // Assuming 'driver' is your WebDriver instance
         String subtitle = element.getText();
-        System.out.println(subtitle);
-
-
-    }
+        System.out.println(subtitle);}
     public void getPrice () {
+        blockAds();
         waitForElement(Price); // Make sure this method correctly waits for the element
         WebElement element = driver.findElement(Price); // Assuming 'driver' is your WebDriver instance
         String price = element.getText();
-        System.out.println(price);
+       System.out.println(price);
     }
-    public void getInfo () {
+    public void getparagraph() {
+        blockAds();
      try  { waitForElement(Info); // Make sure this method correctly waits for the element
         WebElement element = driver.findElement(Info); // Assuming 'driver' is your WebDriver instance
         String info = element.getText();
         System.out.println(info);} catch (TimeoutException e) {System.out.println("no info on this post");}
     }
     public void getPhoneAndSeller() {
+        blockAds();
         waitForElement(postPhone);
         WebElement phoneelement = driver.findElement(postPhone);
         String phoneNumber2 = phoneelement.getAttribute("href");
@@ -160,12 +168,13 @@ System.out.println(title);}catch (TimeoutException e){System.out.println("projec
 
     }
     public List<String> getGallery() {
+        blockAds();
         List<String> assetImageGallery = new ArrayList<>();
         waitForElement(postImage); // Make sure this method correctly waits for the element
         click(postImage);
         List<WebElement> list = driver.findElements(By.cssSelector("[mode='slider']"));
-
-        int imageAmount = list.size();
+        if (list.size()>0) {
+            int imageAmount = list.size();
         for (int i = 0; i < imageAmount; i++) {
             By imageSelector = By.cssSelector("[class='css-wl0tt4 e1wozjxm6'] img");
             WebElement imageElement = driver.findElement(imageSelector);
@@ -180,9 +189,11 @@ System.out.println(title);}catch (TimeoutException e){System.out.println("projec
 
         System.out.println(assetImageGallery); // Print the gallery links
 
-            return assetImageGallery;
+            return assetImageGallery;}
+    else { return null;}
     }
     public List<Map<String, Boolean>>getBoolean(){
+        blockAds();
         List<WebElement> elements = driver.findElements(By.cssSelector("[class=\"css-1wpv10e e125ttrt3\"] div"));
         List<Map<String, Boolean>> assetStatus = new ArrayList<>();
         for (WebElement element : elements) {
@@ -247,6 +258,8 @@ System.out.println(title);}catch (TimeoutException e){System.out.println("projec
         }
         return temp;
     }
+
+
 }
 
 

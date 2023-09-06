@@ -24,7 +24,7 @@ public class BaseTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--incognito");
-        //    options.addArguments("--headless");
+        //options.addArguments("--headless");
         options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
         options.addArguments("--disable-blink-features=AutomationControlled");//Hcaptcha pass
         driver = new ChromeDriver(options);

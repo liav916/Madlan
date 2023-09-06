@@ -29,16 +29,18 @@ String inactive = "css-tc23vv elkstcv0";
     By postImage = By.cssSelector("[class='css-1526ib8 e1r3dysu15']");
     By postPhone = By.cssSelector("[data-auto='phone-number-button']");
     By postSeller = By.cssSelector("[data-auto='poc-name']");
-    By postbackArrow = By.cssSelector("[data-auto='back-button-text']");
+    By postbackArrow = By.cssSelector("[data-auto='sub-menu-back-button'] a");
+    //[data-auto='back-button-text']
     By searchElementField = By.cssSelector("[data-auto='autocomplete-textfield']");
+    By test = By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15");
 
 
     public void clickOnSearchField() {
         waitForElement(searchField);
         WebElement searchField1 = driver.findElement(searchField);
-        scrollToAndClickElement(searchField1);
+      //  scrollToAndClickElement(searchField1);
     }
-    public void insertValue() throws InterruptedException {
+    public void insertValue() {
         WebElement searchElement = driver.findElement(searchElementField);
         searchElement.sendKeys(city);
         By CityFieldDropDown =By.cssSelector("[data-auto='autocomplete-suggestion']");
@@ -53,26 +55,33 @@ String inactive = "css-tc23vv elkstcv0";
         }
 
     }
-    public void allPostSize() throws InterruptedException {
+    public void captchaBypass (){
+
+
+    }
+    public void getAllPostInfo() throws InterruptedException {
         List<WebElement> posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
         for (int i=0; i<=posts.size(); i++){
+            waitForElement(test);
             WebElement post =  posts.get(i);
-            scrollToAndClickElement(post);
-         //   blockAds();
-            click(postbackArrow);
             Thread.sleep(5000);
+            post.click();
+            getpostInfo();
+            blockAds();
+            click(postbackArrow);
             posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
             }
         }
-    public void blockAds(){
-        try{  By add = By.cssSelector("[data-auto='modal-popup']");
-            WebElement addElement = driver.findElement(add);
-            if(addElement.isDisplayed()){
+    public void blockAds() throws InterruptedException{
+
+        Thread.sleep(2000);
+        By add = By.cssSelector("[data-auto='modal-popup']");
+        try{  if (driver.findElement(add).isDisplayed()){
+           // WebElement addElement = driver.findElement(add);
+           // if(addElement.isDisplayed()){
                 By xButton = By.cssSelector("div [data-auto='modal-close-button']");
                 click(xButton);}} catch (NoSuchElementException e){}
-
     }
-
     public void clickoncatgory () {//waiting for all header to load
         waitForElement(header);
         //catch all header catagorys
@@ -82,23 +91,34 @@ String inactive = "css-tc23vv elkstcv0";
         // click on the catgory
         catgory.click();
     }
-    public void getAllPostInfo () {
+   public void getpostInfo () throws InterruptedException {
 
-        getTitle();
-        getSubtitle();
-        getPrice ();
-        getInfo();
-        getPhoneAndSeller();
-        getGallery();
-        getBoolean();
+       blockAds();
 
+       if (getTitle().equals("project")){
+           blockAds();
+           getSubtitle();
+           blockAds();
+           getPrice();
+           blockAds();
+           getInfo();
+           blockAds();
+           getPhoneAndSeller();
+           blockAds();
+           getGallery();
+           blockAds();
+           getBoolean();
+           blockAds();
+       }
     }
-    public void getTitle () {
-
+    public String getTitle () {
+        String title;
+try {
         waitForElement(Title); // Make sure this method correctly waits for the element
         WebElement element = driver.findElement(Title); // Assuming 'driver' is your WebDriver instance
-        String title = element.getText();
-System.out.println(title);}
+         title = element.getText();
+System.out.println(title);}catch (TimeoutException e){System.out.println("project"); title="project";}
+    return title;}
     public void getSubtitle () {
 
         waitForElement(SubTitle); // Make sure this method correctly waits for the element
@@ -109,19 +129,16 @@ System.out.println(title);}
 
     }
     public void getPrice () {
-
         waitForElement(Price); // Make sure this method correctly waits for the element
         WebElement element = driver.findElement(Price); // Assuming 'driver' is your WebDriver instance
         String price = element.getText();
         System.out.println(price);
-
-
     }
     public void getInfo () {
-        waitForElement(Info); // Make sure this method correctly waits for the element
+     try  { waitForElement(Info); // Make sure this method correctly waits for the element
         WebElement element = driver.findElement(Info); // Assuming 'driver' is your WebDriver instance
         String info = element.getText();
-        System.out.println(info);
+        System.out.println(info);} catch (TimeoutException e) {System.out.println("no info on this post");}
     }
     public void getPhoneAndSeller() {
         waitForElement(postPhone);
@@ -133,6 +150,9 @@ System.out.println(title);}
         String sellerName = sellerElement.getText();
         System.out.println(sellerName);
         System.out.println(phoneNumber2);
+    }
+    public void getAssetState() {
+
     }
     public List<String> getGallery() {
         List<String> assetImageGallery = new ArrayList<>();
@@ -200,8 +220,8 @@ System.out.println(title);}
             case "אין סורגים":
                 temp="assetBars";
                 break;
-            case "יש ממ\"ד":
-            case "אין ממ\"ד":
+            case "יש ממ״ד":
+            case "אין ממ״ד":
                 temp="assetMamed";
                 break;
             case "נגיש לנכים":
@@ -212,20 +232,9 @@ System.out.println(title);}
             case "יש דלתות פנדור":
                 temp="assetPandorDoors";
                 break;
-            case "ממ\"ד":
-                temp="assetMamad";
-                break;
-            case "מחסן":
-                temp="assetStorage";
-                break;
-            case "מזגן תדיראן":
-                temp="assetAirConditioner";
-                break;
-            case "ריהוט":
-                temp="assetFurnished";
-                break;
-            case "גמיש":
-                temp="assetContactFlexible";
+            case "אין מחסן":
+            case "יש מחסן":
+                temp="assetStorge";
                 break;
             default:
                 temp= "null";

@@ -55,10 +55,18 @@ String inactive = "css-tc23vv elkstcv0";
         }
 
     }
-    public void captchaBypass (){
+//    public void captchaBypass() throws InterruptedException {
+//        String capchaWe = ""; // Initialize the variable
+//        By capcha = By.cssSelector("div [id=\"bPitjAWqkcoAubC\"] [id=\"CxxbhoAgmliZGaE\"] [id=\"BlXsyQAKJxRzSUu\"]");
+//Thread.sleep(5000);        List<WebElement> capchaWebElement = driver.findElements(capcha);
+//        for (int i = 0; i < capchaWebElement.size(); i++) {
+//            capchaWe = capchaWebElement.get(i).getText();
+//            System.out.println(capchaWebElement.get(i).getAttribute("class"));
+//
+//            System.out.println(capchaWe);
+//        }
+//    }
 
-
-    }
     public void getAllPostInfo() throws InterruptedException {
         List<WebElement> posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
         for (int i=0; i<=posts.size(); i++){
@@ -68,6 +76,7 @@ String inactive = "css-tc23vv elkstcv0";
             post.click();
             getpostInfo();
             blockAds();
+            Thread.sleep(5000);
             click(postbackArrow);
             posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
             }
@@ -93,9 +102,6 @@ String inactive = "css-tc23vv elkstcv0";
     }
    public void getpostInfo () throws InterruptedException {
 
-       blockAds();
-
-       if (getTitle().equals("project")){
            blockAds();
            getSubtitle();
            blockAds();
@@ -110,7 +116,7 @@ String inactive = "css-tc23vv elkstcv0";
            getBoolean();
            blockAds();
        }
-    }
+
     public String getTitle () {
         String title;
 try {
@@ -120,7 +126,6 @@ try {
 System.out.println(title);}catch (TimeoutException e){System.out.println("project"); title="project";}
     return title;}
     public void getSubtitle () {
-
         waitForElement(SubTitle); // Make sure this method correctly waits for the element
         WebElement element = driver.findElement(SubTitle); // Assuming 'driver' is your WebDriver instance
         String subtitle = element.getText();

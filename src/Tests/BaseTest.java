@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+
 import java.util.Collections;
 
 
@@ -24,10 +25,16 @@ public class BaseTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--incognito");
+        options.addArguments("--disable-features=ShadowDOM");
+
         //options.addArguments("--headless");
         options.setExperimentalOption("excludeSwitches", Collections.singletonList("enable-automation"));
+        options.setExperimentalOption("useAutomationExtension","False");
+
         options.addArguments("--disable-blink-features=AutomationControlled");//Hcaptcha pass
         driver = new ChromeDriver(options);
+
+
         resetPage();
         driver.manage().window().maximize();
     }

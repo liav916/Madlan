@@ -7,6 +7,7 @@ import org.junit.*;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.awt.*;
 import java.io.IOException;
 
 
@@ -19,5 +20,10 @@ public class printAdvertisement extends BaseTest {
 driver.get("https://www.madlan.co.il/");
 homePage.clickoncatgory();
 homePage.insertValue();
-homePage.getAllPostInfo();
-   }}
+homePage.getAllPostInfo();}
+        @Test
+        public void test02getAdvertisement () throws InterruptedException, IOException, AWTException {
+            driver.get("https://www.madlan.co.il/listings/gVeifNBAsCG?sort=priceEstimation-asc&tracking_event_source=homepage_persona&tracking_list_index=2&tracking_search_source=homepage_persona");
+            homePage.captchaBypass();
+        }
+   }

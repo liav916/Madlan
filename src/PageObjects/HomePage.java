@@ -2,26 +2,40 @@ package PageObjects;
 
 
 import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.JavascriptExecutor;
+
+import java.awt.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.Duration;
 
 import java.sql.Driver;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 public class HomePage extends BasePage {
 
-String active = "css-1p1vgp0 elkstcv0";
-String inactive = "css-tc23vv elkstcv0";
+    String active = "css-1p1vgp0 elkstcv0";
+    String inactive = "css-tc23vv elkstcv0";
+
     public HomePage(WebDriver driver) {
         super(driver);
     }
+
     String city = "שדרות";
     By searchField = By.cssSelector("[class='multi-search-input-wrapper css-ixz1sj ealzp4l9']");
     By arrowElement = By.cssSelector("data-auto='bulletins-pagination-2'");
     By Title = By.cssSelector("[data-auto='primary_address_text']");
-    By header =By.cssSelector("[data-auto='desktop-header-wrapper']");
+    By header = By.cssSelector("[data-auto='desktop-header-wrapper']");
     By SubTitle = By.cssSelector("[data-auto='secondary_address_text']");
     By Price = By.cssSelector("[data-auto='current-price']");
 
@@ -34,6 +48,10 @@ String inactive = "css-tc23vv elkstcv0";
     By searchElementField = By.cssSelector("[data-auto='autocomplete-textfield']");
     By test = By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15");
 
+    By Ad = By.cssSelector("[data-auto='modal-popup']");
+    By nextPageArrow = By.cssSelector("[class='css-qkpft0']");
+    By captcha = By.cssSelector("[id='content']");
+
 
     public void clickOnSearchField() {
         waitForElement(searchField);
@@ -45,39 +63,47 @@ String inactive = "css-tc23vv elkstcv0";
         Thread.sleep(2000);
         searchElement.sendKeys(city);
         clickOnSearchField();
-        By CityFieldDropDown =By.cssSelector("[data-auto='autocomplete-suggestion']");
+        By CityFieldDropDown = By.cssSelector("[data-auto='autocomplete-suggestion']");
         waitForElement(CityFieldDropDown);
         List<WebElement> list = driver.findElements(CityFieldDropDown);
-        for(int i=0; i< list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             String name = list.get(i).getText();
-            if (name.contains(city) && name.contains("עיר")){
+            if (name.contains(city) && name.contains("עיר")) {
                 (list.get(i)).click();
+                captchaBypass();
                 break;
             }
         }
 
     }
-//    public void captchaBypass() throws InterruptedException {
-//        String capchaWe = ""; // Initialize the variable
-//        By capcha = By.cssSelector("div [id=\"bPitjAWqkcoAubC\"] [id=\"CxxbhoAgmliZGaE\"] [id=\"BlXsyQAKJxRzSUu\"]");
-//Thread.sleep(5000);        List<WebElement> capchaWebElement = driver.findElements(capcha);
-//        for (int i = 0; i < capchaWebElement.size(); i++) {
-//            capchaWe = capchaWebElement.get(i).getText();
-//            System.out.println(capchaWebElement.get(i).getAttribute("class"));
-//
-//            System.out.println(capchaWe);
-//        }
-//    }
+    public void captchaBypass() throws InterruptedException {
+        Thread.sleep(2000);
+        try {
+            WebElement shadowHost = driver.findElement(captcha);
+        if (shadowHost.isDisplayed()) {
+            Actions act = new Actions(driver);
+            act.doubleClick(shadowHost).perform();
+            Thread.sleep(2000);
+            act.sendKeys(Keys.TAB).perform();
+            Thread.sleep(5000);
+            act.keyDown(Keys.ENTER).perform();
+            Thread.sleep(10000);
+            act.keyUp(Keys.ENTER).perform();
+            Thread.sleep(5000);
+        } }catch (TimeoutException e){}catch (NoSuchElementException e ){}
+
+}
+
 
     public void getAllPostInfo() throws InterruptedException {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
         waitForElement(test);
-        List<WebElement> posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
+        List<WebElement> posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15 [data-auto=\"property-details\"]"));//50
         js.executeScript("window.scrollTo(0, 0);");
         for (int i=0; i<=posts.size(); i++){
             waitForElement(test);
-            posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15"));//50
+            posts = driver.findElements(By.cssSelector(".universal-card-body-wrapper.css-79elbk.e1sx3tzs15 [data-auto=\"property-details\"]"));//50
             WebElement post =  posts.get(i);
             String post1 =  posts.get(i).getText();
             if (post1.contains("₪")){
@@ -88,25 +114,25 @@ String inactive = "css-tc23vv elkstcv0";
             Thread.sleep(2000);
             click(postbackArrow);}
 
-            }
+            }clickOnNextPage();
 
         }
     public void blockAds(){
-        By add = By.cssSelector("[data-auto='modal-popup']");
-        try{  waitForElement(add);
-         if (driver.findElement(add).isDisplayed()){
+
+        try{  waitForElement(Ad);
+       //  if (driver.findElement(add).isDisplayed()){
                 By xButton = By.cssSelector("div [data-auto='modal-close-button']");
-                click(xButton);}} catch (TimeoutException e){}
+                click(xButton);} catch (TimeoutException e){}
     } // Done modal
-    public void clickoncatgory () {//waiting for all header to load
-        waitForElement(header);
+    public void clickoncatgory () throws InterruptedException {//waiting for all header to load
+     try{   waitForElement(header);} catch (TimeoutException e){captchaBypass();}
         //catch all header catagorys
         List<WebElement> element = driver.findElements(By.cssSelector("[class='tab-link']"));
         //catch only the catgory i want to press on
         WebElement catgory = element.get(0);
         // click on the catgory
         catgory.click();
-    }
+    } //Done
    public void getpostInfo () {
 
 
@@ -121,7 +147,6 @@ String inactive = "css-tc23vv elkstcv0";
            blockAds();
 
        }
-
     public String getTitle(By by){
 
         String title;
@@ -131,7 +156,7 @@ try {blockAds();
          title = element.getText();
 System.out.println(title);}catch (TimeoutException e){System.out.println("project"); title="project";
 }
-    return title;}
+    return title;} //Done
    public void getSubtitle () {
        blockAds();
         waitForElement(SubTitle); // Make sure this method correctly waits for the element
@@ -170,8 +195,9 @@ System.out.println(title);}catch (TimeoutException e){System.out.println("projec
     public List<String> getGallery() {
         blockAds();
         List<String> assetImageGallery = new ArrayList<>();
+    try {
         waitForElement(postImage); // Make sure this method correctly waits for the element
-        click(postImage);
+       click(postImage);} catch (TimeoutException e) {}
         List<WebElement> list = driver.findElements(By.cssSelector("[mode='slider']"));
         if (list.size()>0) {
             int imageAmount = list.size();
@@ -190,8 +216,12 @@ System.out.println(title);}catch (TimeoutException e){System.out.println("projec
         System.out.println(assetImageGallery); // Print the gallery links
 
             return assetImageGallery;}
-    else { return null;}
-    }
+    else { String imageLink = "NULL";
+            assetImageGallery.add(imageLink);
+            System.out.println(assetImageGallery);
+            return assetImageGallery;
+        }
+    } //Done
     public List<Map<String, Boolean>>getBoolean(){
         blockAds();
         List<WebElement> elements = driver.findElements(By.cssSelector("[class=\"css-1wpv10e e125ttrt3\"] div"));
@@ -213,7 +243,7 @@ System.out.println(title);}catch (TimeoutException e){System.out.println("projec
         }
         System.out.println(assetStatus);
         return assetStatus;
-    }
+    } //Done
     public String elementNames( String elem) { String temp="";
         switch(elem) {
             case "אין מיזוג אויר":
@@ -257,10 +287,15 @@ System.out.println(title);}catch (TimeoutException e){System.out.println("projec
                 break;
         }
         return temp;
-    }
+    } //Done
+    public void clickOnNextPage(){
+        waitForElement(nextPageArrow);
+        WebElement nextPageButton = driver.findElement(nextPageArrow);
+        if(nextPageButton.isEnabled()){
+            nextPageButton.click();}
 
 
-}
+}} // Done
 
 
 

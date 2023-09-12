@@ -1,31 +1,29 @@
 package PageObjects;
 
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeOptions;
+
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
 import org.openqa.selenium.JavascriptExecutor;
 
-import java.awt.*;
-import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.time.Duration;
-
-import java.sql.Driver;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 
 public class HomePage extends BasePage {
 
     String active = "css-1p1vgp0 elkstcv0";
     String inactive = "css-tc23vv elkstcv0";
+    String JsonPath = "C:\\Users\\liav\\IdeaProjects\\Madlan\\src\\Data\\israel_cities.json";
+
 
     public HomePage(WebDriver driver) {
         super(driver);
@@ -38,7 +36,6 @@ public class HomePage extends BasePage {
     By header = By.cssSelector("[data-auto='desktop-header-wrapper']");
     By SubTitle = By.cssSelector("[data-auto='secondary_address_text']");
     By Price = By.cssSelector("[data-auto='current-price']");
-
     By Info = By.cssSelector("[class='css-v1qjdi ebqee3y2']");
     By postImage = By.cssSelector("[class='css-1526ib8 e1r3dysu15']");
     By postPhone = By.cssSelector("[data-auto='phone-number-button']");
@@ -58,23 +55,28 @@ public class HomePage extends BasePage {
         WebElement searchField1 = driver.findElement(searchField);
         scrollToAndClickElement(searchField1);
     }
-    public void insertValue() throws InterruptedException {
+    public String searchForCity(String city) throws InterruptedException {
+        String name = null;
         WebElement searchElement = driver.findElement(searchElementField);
         Thread.sleep(2000);
+        captchaBypass();
         searchElement.sendKeys(city);
+        captchaBypass();
         clickOnSearchField();
         By CityFieldDropDown = By.cssSelector("[data-auto='autocomplete-suggestion']");
         waitForElement(CityFieldDropDown);
         List<WebElement> list = driver.findElements(CityFieldDropDown);
+
         for (int i = 0; i < list.size(); i++) {
-            String name = list.get(i).getText();
-            if (name.contains(city) && name.contains("עיר")) {
+            name = list.get(i).getText();
+            if (name.contains(city) && name.contains("עיר"))
                 (list.get(i)).click();
-                captchaBypass();
-                break;
-            }
+            captchaBypass();
+
+
         }
 
+        return name;
     }
     public void captchaBypass() throws InterruptedException {
         Thread.sleep(2000);
@@ -90,11 +92,10 @@ public class HomePage extends BasePage {
             Thread.sleep(10000);
             act.keyUp(Keys.ENTER).perform();
             Thread.sleep(5000);
+            captchaBypass();
         } }catch (TimeoutException e){}catch (NoSuchElementException e ){}
 
 }
-
-
     public void getAllPostInfo() throws InterruptedException {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
@@ -134,7 +135,6 @@ public class HomePage extends BasePage {
         catgory.click();
     } //Done
    public void getpostInfo () {
-
 
 
        getTitle(Title);
@@ -295,11 +295,35 @@ System.out.println(title);}catch (TimeoutException e){System.out.println("projec
             nextPageButton.click();}
 
 
-}} // Done
+} // Done
 
 
 
+    public void readCityFromJson() throws InterruptedException, IOException, ParseException {
+        JSONParser parser = new JSONParser();
+        // Read and parse the JSON file containing Israel cities data
+        Object obj = parser.parse(new FileReader(JsonPath));
+        JSONObject jsonObject = (JSONObject) obj;
+        JSONArray cities = (JSONArray) jsonObject.get("city");
 
+        // Loop through each city in the JSON array
+        for (Object cityObj : cities) {
+            JSONObject city = (JSONObject) cityObj;
+            JSONArray hebrewNameArray = (JSONArray) city.get("hebrew_name");
+            String hebrewName = (String) hebrewNameArray.get(0);
+            // Search for the city using the extracted Hebrew name
+           String name =  searchForCity(hebrewName);
+            if (name.contains(hebrewName) && name.contains("עיר"))
+            {  getAllPostInfo();
+            Thread.sleep(5000);}
+            else {}
+            {
+
+    }
+
+
+
+        }}}
 
 
 

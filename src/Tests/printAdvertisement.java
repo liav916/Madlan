@@ -16,14 +16,10 @@ public class printAdvertisement extends BaseTest {
 
 
     @Test
-    public void test01getAdvertisement () throws InterruptedException {
+    public void test01getAdvertisement () throws InterruptedException, IOException, ParseException {
 driver.get("https://www.madlan.co.il/");
 homePage.clickoncatgory();
-homePage.insertValue();
+homePage.readCityFromJson();
 homePage.getAllPostInfo();}
-        @Test
-        public void test02getAdvertisement () throws InterruptedException, IOException, AWTException {
-            driver.get("https://www.madlan.co.il/listings/gVeifNBAsCG?sort=priceEstimation-asc&tracking_event_source=homepage_persona&tracking_list_index=2&tracking_search_source=homepage_persona");
-            homePage.captchaBypass();
+
         }
-   }

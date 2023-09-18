@@ -18,7 +18,7 @@ public class printAdvertisement extends BaseTest {
     @Test
     public void test01getAdvertisement () throws InterruptedException, IOException, ParseException {
 driver.get("https://www.madlan.co.il/");
-homePage.clickoncatgory();
+homePage.clickoncatgory(); // works good
 homePage.readCityFromJson();
 homePage.getAllPostInfo();}
 
